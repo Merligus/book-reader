@@ -1,0 +1,8 @@
+opencv-python
+pillow
+scikit-image
+requests
+Flask==3.0.3
+Flask-Session==0.8.0
+Flask-Cors==4.0.1
+gunicorn==22.0.0
