@@ -3,3 +3,7 @@ triton==3.0.0
 transformers==4.46.3
 safetensors==0.4.5
 accelerate>=0.26.0
+Flask==3.0.3
+Flask-Session==0.8.0
+Flask-Cors==4.0.1
+gunicorn==22.0.0

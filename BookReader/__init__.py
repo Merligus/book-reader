@@ -32,22 +32,36 @@ CORS(app)
 # ******************************************
 @app.route("/", methods=["POST", "GET"])
 def book_reader():
-    # check if image is valid to analyse skin
     json = {}
+    # check if image is valid
     if "image" in request.json:
+        # ocr
         body = {"image": request.json["image"]}
-
-        # age analysis
         start_t = time.time()
         ocr_response = requests.post("http://localhost:7861/", json=body)
         end_t = time.time()
         print(f"ocr took {end_t - start_t:.0f} s")
-
         ocr_json = ocr_response.json()
-        for item in ocr_json:
-            json[item] = ocr_json[item]
-
-    print(json)
+        print(ocr_json)
+        
+        # create body to send to qwen
+        body = {"text": ocr_json["text"]}
+        start_t = time.time()
+        qwen_response = requests.post("http://localhost:7862/", json=body)
+        end_t = time.time()
+        print(f"qwen took {end_t - start_t:.0f} s")
+        qwen_json = qwen_response.json()
+        print(qwen_json)
+        
+        # create body to send to sdxl
+        body = {"image_description": qwen_json["image_description"]}
+        start_t = time.time()
+        sdxl_response = requests.post("http://localhost:7863/", json=body)
+        end_t = time.time()
+        print(f"sdxl took {end_t - start_t:.0f} s")
+        sdxl_json = sdxl_response.json()
+        print(sdxl_json)
+        
     return json
 
 
