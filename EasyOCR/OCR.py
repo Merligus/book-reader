@@ -1,16 +1,14 @@
 import easyocr
-import cv2
+import io
 import numpy as np
-import PIL
 from PIL import Image, ImageDraw
-from utils import base64_to_np
 
 class OCR:
     MAX_IMG_SIZE = 2000
     
     def __init__(self, language="pt", debug=False):
         # for debug
-        self.output = "result.jpg"
+        self.output = "EasyOCR/result.jpg"
         self.debug = debug
 
         self.reader = easyocr.Reader(
@@ -126,14 +124,10 @@ class OCR:
         # return new word bounds
         return new_result
 
-    def get_image(self, base64_image, is_base64):
-        if is_base64:
-            # read data
-            image = base64_to_np(base64_image)
-        else:
-            # read data
-            image = cv2.imread(base64_image)
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    def get_image(self, img_bytes):
+        # img_bytes to numpy image
+        image = Image.open(io.BytesIO(img_bytes))
+        image = np.array(image)
 
         # image must be between 0-255
         if np.max(image) < 1.1:
@@ -158,17 +152,17 @@ class OCR:
         return np.asarray(im)
 
     # run OCR
-    def __call__(self, base64_image, is_base64=True):
+    def __call__(self, img_bytes):
         # preprocess the image
-        image_rgb = self.get_image(base64_image, is_base64=is_base64)
+        image_rgb = self.get_image(img_bytes)
 
         result = self.reader.readtext(image_rgb)
         # process the words into lines
         result = self.process_lines(result)
 
         # (optional for debug) save the bounding boxes
-        if self.debug and not is_base64:
-            im = PIL.Image.open(base64_image)
+        if self.debug:
+            im = Image.fromarray(image_rgb)
             self.draw_boxes(im, result)
             im.save(self.output)
 

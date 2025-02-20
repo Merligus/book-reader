@@ -17,7 +17,7 @@ class QWEN:
         # create the prompts with the text
         prompts = [
             f"show me short english prompts that describe the objects, the people and the place in this text: \"{input}\", no formatting, no symbols, no conversation, no numbers",
-            f"summary in its original language the following text in a short way: {input}",
+            f"answer in original language prompt, summary the following text in a short way: {input}",
         ]
         responses = []
         for prompt in prompts:

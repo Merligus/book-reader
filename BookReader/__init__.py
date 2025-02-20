@@ -1,5 +1,5 @@
 # flask libs to serve
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_session import Session
 from flask_cors import CORS
 
@@ -32,36 +32,47 @@ CORS(app)
 # ******************************************
 @app.route("/", methods=["POST", "GET"])
 def book_reader():
+    if 'image' not in request.files:
+        return jsonify({"error": "No image provided"}), 400
+    
+    # Get image file from request
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({"error": "Empty filename"}), 400
+    
+    # Direct access to binary data
+    img_bytes = file.read()
+
     json = {}
-    # check if image is valid
-    if "image" in request.json:
-        # ocr
-        body = {"image": request.json["image"]}
-        start_t = time.time()
-        ocr_response = requests.post("http://localhost:7861/", json=body)
-        end_t = time.time()
-        print(f"ocr took {end_t - start_t:.0f} s")
-        ocr_json = ocr_response.json()
-        print(ocr_json)
-        
-        # create body to send to qwen
-        body = {"text": ocr_json["text"]}
-        start_t = time.time()
-        qwen_response = requests.post("http://localhost:7862/", json=body)
-        end_t = time.time()
-        print(f"qwen took {end_t - start_t:.0f} s")
-        qwen_json = qwen_response.json()
-        print(qwen_json)
-        
-        # create body to send to sdxl
-        body = {"image_description": qwen_json["image_description"]}
-        start_t = time.time()
-        sdxl_response = requests.post("http://localhost:7863/", json=body)
-        end_t = time.time()
-        print(f"sdxl took {end_t - start_t:.0f} s")
-        sdxl_json = sdxl_response.json()
-        print(sdxl_json)
-        
+    # ocr
+    start_t = time.time()
+    ocr_response = requests.post("http://localhost:7861/", files={"image": img_bytes})
+    end_t = time.time()
+    print(f"ocr took {end_t - start_t:.0f} s")
+    ocr_json = ocr_response.json()
+    print(ocr_json)
+
+    # create body to send to qwen
+    body = {"text": ocr_json["text"]}
+    start_t = time.time()
+    qwen_response = requests.post("http://localhost:7862/", json=body)
+    end_t = time.time()
+    print(f"qwen took {end_t - start_t:.0f} s")
+    qwen_json = qwen_response.json()
+    print(qwen_json)
+
+    # create body to send to sdxl
+    body = {"image_description": qwen_json["image_description"]}
+    start_t = time.time()
+    sdxl_response = requests.post("http://localhost:7863/", json=body)
+    end_t = time.time()
+    print(f"sdxl took {end_t - start_t:.0f} s")
+    sdxl_json = sdxl_response.json()
+    print(sdxl_json)
+
+    json["image_path"] = sdxl_json["image_path"]
+    json["summary"] = qwen_json["summary"]
+
     return json
 
 

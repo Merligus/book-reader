@@ -1,5 +1,5 @@
 # flask libs to serve
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_session import Session
 from flask_cors import CORS
 
@@ -38,10 +38,16 @@ ocr_model = OCR(debug=False)
 # ******************************************
 @app.route("/", methods=["POST", "GET"])
 def analysis():
+    if 'image' not in request.files:
+        return jsonify({"error": "No image provided"}), 400
+    
+    # Direct access to binary data
+    file = request.files['image']
+    img_bytes = file.read()
+    
     # check if image is valid to analyse
     json = {}
-    if "image" in request.json:
-        json["text"] = ocr_model(request.json["image"])
+    json["text"] = ocr_model(img_bytes)
 
     return json
 

@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# ocr
-# Name of the conda environment
-ENV_NAME=EasyOCR
-
 # Path to the conda executable
 CONDA_PATH=$(which conda)
 
@@ -16,116 +12,41 @@ fi
 # Initialize conda
 eval "$($CONDA_PATH shell.bash hook)"
 
-# Create the conda environment
-echo "Creating conda environment..."
-conda create -n $ENV_NAME python=3.11 -y
+# List of conda environments to activate
+ENVIRONMENTS=("BookReader:3.9" "EasyOCR:3.11" "QWEN:3.11" "SDXL:3.11")
 
-# Activate the conda environment
-echo "Activating conda environment..."
-conda activate $ENV_NAME
+# Loop through each environment and activate it
+for ENV_NAME_VERSION in "${ENVIRONMENTS[@]}"; do
+    # get environment name and python version
+    IFS=':' read -r ENV_NAME PYTHON_VERSION <<< "$ENV_NAME_VERSION"
 
-cd $ENV_NAME
+    if { conda env list | grep $ENV_NAME; } >/dev/null 2>&1; then
+        echo "$ENV_NAME already exists."
+    else
+        # Create the conda environment
+        echo "Creating conda environment: $ENV_NAME with Python version: $PYTHON_VERSION"
+        conda create -n $ENV_NAME python=$PYTHON_VERSION -y
+    fi
+    # Activate the conda environment
+    echo "Activating conda environment..."
+    conda activate $ENV_NAME
 
-# Install the requirements from requirements.txt
-if [ -f requirements.txt ]; then
-    echo "Installing requirements from requirements.txt..."
-    pip install -r requirements.txt
-else
-    echo "requirements.txt file not found. Please provide the file."
-    exit
-fi
+    cd $ENV_NAME
 
-echo "Conda environment '$ENV_NAME' is ready."
+    # Install the requirements from requirements.txt
+    if [ -f requirements.txt ]; then
+        echo "Installing requirements from requirements.txt..."
+        pip install -r requirements.txt
+    else
+        echo "requirements.txt file not found. Please provide the file."
+        exit
+    fi
 
-echo "Deactivating conda environment..."
-conda deactivate
-cd ..
+    echo "Conda environment '$ENV_NAME' is ready."
 
-# llm
-# Name of the conda environment
-ENV_NAME=QWEN
-
-# Create the conda environment
-echo "Creating conda environment..."
-conda create -n $ENV_NAME python=3.11 -y
-
-# Activate the conda environment
-echo "Activating conda environment..."
-conda activate $ENV_NAME
-
-cd $ENV_NAME
-
-# Install the requirements from requirements.txt
-if [ -f requirements.txt ]; then
-    echo "Installing requirements from requirements.txt..."
-    pip install -r requirements.txt
-else
-    echo "requirements.txt file not found. Please provide the file."
-    exit
-fi
-
-echo "Conda environment '$ENV_NAME' is ready."
-
-echo "Deactivating conda environment..."
-conda deactivate
-cd ..
-
-# sdxl
-# Name of the conda environment
-ENV_NAME=SDXL
-
-# Create the conda environment
-echo "Creating conda environment..."
-conda create -n $ENV_NAME python=3.11 -y
-
-# Activate the conda environment
-echo "Activating conda environment..."
-conda activate $ENV_NAME
-
-cd $ENV_NAME
-
-# Install the requirements from requirements.txt
-if [ -f requirements.txt ]; then
-    echo "Installing requirements from requirements.txt..."
-    pip install -r requirements.txt
-else
-    echo "requirements.txt file not found. Please provide the file."
-    exit
-fi
-
-echo "Conda environment '$ENV_NAME' is ready."
-
-echo "Deactivating conda environment..."
-conda deactivate
-cd ..
-
-# central api
-# Name of the conda environment
-ENV_NAME=BookReader
-
-# Create the conda environment
-echo "Creating conda environment..."
-conda create -n $ENV_NAME python=3.9 -y
-
-# Activate the conda environment
-echo "Activating conda environment..."
-conda activate $ENV_NAME
-
-cd $ENV_NAME
-
-# Install the requirements from requirements.txt
-if [ -f requirements.txt ]; then
-    echo "Installing requirements from requirements.txt..."
-    pip install -r requirements.txt
-else
-    echo "requirements.txt file not found. Please provide the file."
-    exit
-fi
-
-echo "Conda environment '$ENV_NAME' is ready."
-
-echo "Deactivating conda environment..."
-conda deactivate
-cd ..
+    echo "Deactivating conda environment..."
+    conda deactivate
+    cd ..
+done
 
 echo "Installation complete."

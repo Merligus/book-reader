@@ -21,6 +21,15 @@ def base64_to_np(b64_img):
         image_np = rgba2rgb(image_np)
     return image_np
 
+def numpy_to_base64(image) -> str:
+    # Save image to a BytesIO object
+    buffered = io.BytesIO()
+    image.save(buffered, format="PNG")
+
+    # Encode to base64 string
+    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    
+    return img_str
 
 def hex2lab(hex):
     rgb = ImageColor.getcolor(hex, "RGB")

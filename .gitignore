@@ -92,3 +92,6 @@ output/
 input/
 
 !test/*
+
+node_modules/
+package-lock.json
