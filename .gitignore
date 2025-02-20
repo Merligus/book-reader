@@ -91,6 +91,4 @@ Testing notebook.ipynb
 output/
 input/
 
-run.sh
-
 !test/*

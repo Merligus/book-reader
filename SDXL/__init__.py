@@ -4,7 +4,7 @@ from flask_session import Session
 from flask_cors import CORS
 
 # sdxl lib
-from Lora.SDXL import SDXL
+from SDXL.SDXL import SDXL
 
 # system libs
 import os
