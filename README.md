@@ -1,7 +1,17 @@
-# book-reader
+# Book Reader
 
 ## Install
-Add script to install the environments 
+
+Run the bash script to install the conda environments:
+
+```sh
+bash install.sh
+```
 
 ## Run
-Add script to run the apps for each stage and run gradio app for interface
+
+1. Run the bash script to download the models and run the APIs.
+
+```sh
+bash run.sh
+```
