@@ -15,3 +15,7 @@ bash install.sh
 ```sh
 bash run.sh
 ```
+
+## Example
+
+![](./test/test1.gif)
