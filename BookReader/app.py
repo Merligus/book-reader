@@ -36,14 +36,14 @@ def process_image(input_img):
 
 # Create Gradio interface
 with gr.Blocks() as demo:
-    gr.Markdown("# Image Processing App")
+    gr.Markdown("# Book Reader")
     with gr.Row():
         with gr.Column():
             input_image = gr.Image(label="Input Image")
             submit_btn = gr.Button("Process")
         with gr.Column():
-            output_image = gr.Image(label="Processed Image")
-            subtitle = gr.Text(label="Subtitle")
+            output_image = gr.Image(label="Imagined")
+            subtitle = gr.Text(label="Summary")
 
     submit_btn.click(
         fn=process_image,
