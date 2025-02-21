@@ -16,8 +16,8 @@ class QWEN:
     def __call__(self, input):
         # create the prompts with the text
         prompts = [
-            f"show me short english prompts that describe the objects, the people and the place in this text: \"{input}\", no formatting, no symbols, no conversation, no numbers",
-            f"answer in original language prompt, summary the following text in a short way: {input}",
+            f"describe the objects, the people and the place in this text: \"{input}\", answer in 25 words max",
+            f"answer in text's language prompt, get 3 main points of the text: {input}",
         ]
         responses = []
         for prompt in prompts:
