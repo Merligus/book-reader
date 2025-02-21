@@ -19,3 +19,5 @@ bash run.sh
 ## Example
 
 ![](./test/test1.gif)
+
+![](./test/result1.png) ![](./test/summary1.png)
