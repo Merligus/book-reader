@@ -1,4 +1,4 @@
-# EasyOCR
+# SDXL
 
 ## Install
 
