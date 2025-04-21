@@ -1,4 +1,4 @@
-# EasyOCR
+# QWEN
 
 ## Install
 
